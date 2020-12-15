@@ -17,7 +17,43 @@
     background-color: rgb(175, 174, 174);
     
 }
+p{
+    text-align: left;
+}
 
 .choice-answer{
     margin: 0;
+    width: 100%;
+}
+
+.correct{
+    background-color: rgb(27, 190, 27);
+}
+
+.incorrect{
+    background-color: rgb(218, 10, 10);
+}
+
+/*score*/
+
+.score{
+    padding: 10px;
+}
+.score-item{
+    background-color: rgb(46, 75, 57);
+    color: white;
+    height: 80px;
+    width: 110px;
+    margin: 10px;
+}
+
+.scoreCounter{
+    color: white;
+    padding: 0;
+    font-size: 25px;
+    margin-left: 20px;
+}
+
+.score-item p{
+    padding-bottom: 1px;
 }

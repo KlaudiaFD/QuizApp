@@ -1,8 +1,9 @@
 const question=document.querySelector('.question');
-const choices=document.querySelector('.choise-answer');
+const choices=Array.from(document.getElementsByClassName('choice-answer'));
+const scoreCounter=document.querySelector('.scoreCounter')
 
 let currentQuestion={};   // aktualne pytania
-let acceptAnswers= true;
+let acceptAnswers= false;
 let score=0;
 let questionsCounter=0;   //licznik pytan
 let availableQuestions=[];  //dostępne pytania
@@ -31,23 +32,34 @@ let questions=[
         choice3: "msg ('Hello World') ",
         choice4: "alert(Hello World')",
         answer: 4
-    },
+    }
     
 ];
 
 
-const correct=10;
 const maxQuestions=3;
 
 startGame=()=>{
     questionsCounter=0;
     score=0;
-    availableQuestions=[...questions];
+    availableQuestions=[ ... questions];
     getNewQuestions();
-}
+};
 
 getNewQuestions=()=>{
+
+    if(availableQuestions.length === 0 || questionsCounter >= maxQuestions){
+        return window.location.assign('/end.html');
+    } //end the game
+
+
     questionsCounter++;
+
+    //counter of quesions
+    scoreCounter.innerText= questionsCounter + '/' + maxQuestions;
+
+
+
     const questionIndex= Math.floor(Math.random()* availableQuestions.length);
     currentQuestion=availableQuestions[questionIndex];
     question.innerText=currentQuestion.question;
@@ -56,6 +68,30 @@ getNewQuestions=()=>{
         const number = choice.dataset['number'];
         choice.innerText=currentQuestion['choice' + number];
     });
+
+    availableQuestions.splice(questionIndex, 1);
+
+    acceptAnswers=true;
 };
+
+choices.forEach(choice =>{
+    choice.addEventListener('click', e=>{
+        if(!acceptAnswers)return;
+        
+        acceptAnswers=false;
+        const selectedChoice=e.target;
+        const selectedAnswer=selectedChoice.dataset['number'];
+        
+        //correct on incorrect questions, green/red//
+        const classSelect= selectedAnswer == currentQuestion.answer ? 'correct' : 'incorrect';
+
+        selectedChoice.parentElement.classList.add(classSelect);
+        setTimeout(()=>{
+            selectedChoice.parentElement.classList.remove(classSelect);
+            getNewQuestions();
+        }, 1000)
+
+    });
+});
 
 startGame();
