@@ -49,6 +49,7 @@ startGame=()=>{
 getNewQuestions=()=>{
 
     if(availableQuestions.length === 0 || questionsCounter >= maxQuestions){
+        localStorage.setItem('recentScore', score);
         return window.location.assign('/end.html');
     } //end the game
 
