@@ -8,36 +8,40 @@ let score=0;
 let questionsCounter=0;   //licznik pytan
 let availableQuestions=[];  //dostępne pytania
 
-let questions=[
-    {
-        question: "Inside which HTML element do we put in JavaScript?",
-        choice1: "<scrip>",
-        choice2: "<javascript>",
-        choice3: "<js>",
-        choice4: "<scripting>",
-        answer: 1
-    },
-    {
-        question: "What is the correct syntax for referring to an axternal script called 'xxx.js'?",
-        choice1: "<script href='xxx.js'>",
-        choice2: "<script name='xxx.js'>",
-        choice3: "<script scr='xxx.js'>",
-        choice4: "<script file= 'xxx.js'>",
-        answer: 3
-    },
-    {
-        question: "How do you write 'Hello World' in an alert box?",
-        choice1: "msgBox ('Hello World')",
-        choice2: "alertBox ('Hello World') ",
-        choice3: "msg ('Hello World') ",
-        choice4: "alert(Hello World')",
-        answer: 4
-    }
-    
-];
+let questions=[];
 
+fetch("https://opentdb.com/api.php?amount=10&category=27&difficulty=medium")
+.then(res=>{
+    return res.json();
+})
+.then(loadedQuestions => {
+    console.log(loadedQuestions.results);
+    questions=loadedQuestions.results.map(loadedQuestion=>{
+        const formattedQuestion={
+            question: loadedQuestion.question
+        };
 
-const maxQuestions=3;
+        const answerChoices= [ ... loadedQuestion.incorrect_answers];
+        formattedQuestion.answer=Math.floor(Math.random() * 3) +1;
+        
+        answerChoices.splice(
+            formattedQuestion.answer - 1, 0, loadedQuestion.correct_answer
+        );
+
+        answerChoices.forEach((choice, index)=>{
+            formattedQuestion["choice" + (index + 1 )] = choice;
+        });
+
+        return formattedQuestion;
+    });
+
+    startGame();
+})
+.catch(err=>{
+    console.error(err);
+})
+
+const maxQuestions=10;
 
 startGame=()=>{
     questionsCounter=0;
@@ -49,7 +53,6 @@ startGame=()=>{
 getNewQuestions=()=>{
 
     if(availableQuestions.length === 0 || questionsCounter >= maxQuestions){
-        localStorage.setItem('recentScore', score);
         return window.location.assign('/end.html');
     } //end the game
 
@@ -58,7 +61,7 @@ getNewQuestions=()=>{
 
     //counter of quesions
     scoreCounter.innerText= questionsCounter + '/' + maxQuestions;
-
+    localStorage.setItem('scoreCounter', score);
 
 
     const questionIndex= Math.floor(Math.random()* availableQuestions.length);
@@ -95,4 +98,3 @@ choices.forEach(choice =>{
     });
 });
 
-startGame();
